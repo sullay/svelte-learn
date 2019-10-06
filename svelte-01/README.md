@@ -1,109 +1,121 @@
-# sapper-template
+# 什么是svelte?
+Svelte是用于构建快速Web应用程序的工具。
 
-The default [Sapper](https://github.com/sveltejs/sapper) template, available for Rollup and webpack.
+它类似于React和Vue这样的JavaScript框架。但是有一个关键的区别：Svelte在构建时将您的svelte代码转换为理想的JavaScript 代码，而不是在运行时解释您的代码。想要详细了解请查看[svelte简介](https://svelte.dev/blog/svelte-3-rethinking-reactivity)。
+注：本教程中使用了Sapper框架进行svelte程序的开发。学习语法环节不需要掌握sapper框架的使用，想要了解的话请查看[sapper文档](https://sapper.svelte.dev/docs/)。
+本教程的所有代码均上传到github有需要的同学可以参考 [https://github.com/sullay/svelte-learn](https://github.com/sullay/svelte-learn)。
 
 
-## Getting started
+###  组件 components
+在Svelte中，一个应用程序由一个或多个组件组成。组件是可重用的独立代码块，它封装在一起的HTML，CSS和JavaScript，并写入.svelte文件中。
 
-
-### Using `degit`
-
-[`degit`](https://github.com/Rich-Harris/degit) is a scaffolding tool that lets you create a directory from a branch in a repository. Use either the `rollup` or `webpack` branch in `sapper-template`:
-
-```bash
-# for Rollup
-npx degit "sveltejs/sapper-template#rollup" my-app
-# for webpack
-npx degit "sveltejs/sapper-template#webpack" my-app
+### 添加数据
+在组件中声明一个变量name并在html中进行引用。“{}”内可以使用任何JavaScript代码。
 ```
+<script>
+	let name = 'world';
+</script>
 
-
-### Using GitHub templates
-
-Alternatively, you can use GitHub's template feature with the [sapper-template-rollup](https://github.com/sveltejs/sapper-template-rollup) or [sapper-template-webpack](https://github.com/sveltejs/sapper-template-webpack) repositories.
-
-
-### Running the project
-
-However you get the code, you can install dependencies and run the project in development mode with:
-
-```bash
-cd my-app
-npm install # or yarn
-npm run dev
+<h1>Hello {name}!</h1>
+<h1>Hello {name.toUpperCase()}!</h1>
 ```
-
-Open up [localhost:3000](http://localhost:3000) and start clicking around.
-
-Consult [sapper.svelte.dev](https://sapper.svelte.dev) for help getting started.
-
-
-## Structure
-
-Sapper expects to find two directories in the root of your project —  `src` and `static`.
-
-
-### src
-
-The [src](src) directory contains the entry points for your app — `client.js`, `server.js` and (optionally) a `service-worker.js` — along with a `template.html` file and a `routes` directory.
-
-
-#### src/routes
-
-This is the heart of your Sapper app. There are two kinds of routes — *pages*, and *server routes*.
-
-**Pages** are Svelte components written in `.svelte` files. When a user first visits the application, they will be served a server-rendered version of the route in question, plus some JavaScript that 'hydrates' the page and initialises a client-side router. From that point forward, navigating to other pages is handled entirely on the client for a fast, app-like feel. (Sapper will preload and cache the code for these subsequent pages, so that navigation is instantaneous.)
-
-**Server routes** are modules written in `.js` files, that export functions corresponding to HTTP methods. Each function receives Express `request` and `response` objects as arguments, plus a `next` function. This is useful for creating a JSON API, for example.
-
-There are three simple rules for naming the files that define your routes:
-
-* A file called `src/routes/about.svelte` corresponds to the `/about` route. A file called `src/routes/blog/[slug].svelte` corresponds to the `/blog/:slug` route, in which case `params.slug` is available to the route
-* The file `src/routes/index.svelte` (or `src/routes/index.js`) corresponds to the root of your app. `src/routes/about/index.svelte` is treated the same as `src/routes/about.svelte`.
-* Files and directories with a leading underscore do *not* create routes. This allows you to colocate helper modules and components with the routes that depend on them — for example you could have a file called `src/routes/_helpers/datetime.js` and it would *not* create a `/_helpers/datetime` route
-
-
-### static
-
-The [static](static) directory contains any static assets that should be available. These are served using [sirv](https://github.com/lukeed/sirv).
-
-In your [service-worker.js](src/service-worker.js) file, you can import these as `files` from the generated manifest...
-
-```js
-import { files } from '@sapper/service-worker';
+如果变量名于属性名相同的情况下，可以简写例如src={src}。
 ```
+<script>
+	let name = 'world';
+	let src ="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1570390818923&di=1b477739d17e14e5d8ee39b19cb40748&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F012e3b5954ee3da8012193a387c830.png%401280w_1l_2o_100sh.png"
+</script>
 
-...so that you can cache them (though you can choose not to, for example if you don't want to cache very large files).
-
-
-## Bundler config
-
-Sapper uses Rollup or webpack to provide code-splitting and dynamic imports, as well as compiling your Svelte components. With webpack, it also provides hot module reloading. As long as you don't do anything daft, you can edit the configuration files to add whatever plugins you'd like.
-
-
-## Production mode and deployment
-
-To start a production version of your app, run `npm run build && npm start`. This will disable live reloading, and activate the appropriate bundler plugins.
-
-You can deploy your application to any environment that supports Node 8 or above. As an example, to deploy to [Now](https://zeit.co/now), run these commands:
-
-```bash
-npm install -g now
-now
+<img {src} alt="Hello {name}!">
 ```
-
-
-## Using external components
-
-When using Svelte components installed from npm, such as [@sveltejs/svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list), Svelte needs the original component source (rather than any precompiled JavaScript that ships with the component). This allows the component to be rendered server-side, and also keeps your client-side app smaller.
-
-Because of that, it's essential that the bundler doesn't treat the package as an *external dependency*. You can either modify the `external` option under `server` in [rollup.config.js](rollup.config.js) or the `externals` option in [webpack.config.js](webpack.config.js), or simply install the package to `devDependencies` rather than `dependencies`, which will cause it to get bundled (and therefore compiled) with your app:
-
-```bash
-npm install -D @sveltejs/svelte-virtual-list
+### 样式style
+组件中可以使用<style>添加样式并且这些css规则只适用于当前组件。
+实现方式是给组件内的所有css选择器都添加一个相同的class选择器并且与其他组件不相同，例如：
 ```
+h1{
+ text-align: center;
+}
 
+h1.svelte-17zljpa{
+ text-align: center;
+}
+```
+同时也给所有的标签添加一个相同的class属性。
 
-## Bugs and feedback
+```
+<style>
+h1{
+	text-align: center;
+}
+img{
+	width: 100%;
+}
+</style>
 
-Sapper is in early development, and may have the odd rough edge here and there. Please be vocal over on the [Sapper issue tracker](https://github.com/sveltejs/sapper/issues).
+<script>
+	let name = 'world';
+	let src ="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1570390818923&di=1b477739d17e14e5d8ee39b19cb40748&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F012e3b5954ee3da8012193a387c830.png%401280w_1l_2o_100sh.png"
+</script>
+
+<h1>Hello {name}!</h1>
+<h1>Hello {name.toUpperCase()}!</h1>
+<img {src} alt="Hello {name}!">
+```
+如果希望css规则能够全局生效可以使用:global关键字。
+实现方式是global修饰的选择器不会添加class选择器。
+```
+<style>
+/* 所有h1标签 */
+:global(h1){
+    color: red;
+}
+/* main标签内的所有h1标签 */
+main :global(h1){
+    color: red;
+}
+</style>
+```
+### 引入子组件
+注意：自定义组件变量名首字母需为大写字母。并且父组件中的样式不会对子组件生效，反之也一样。
+``` 
+// sullay.svelte
+<h1>I am sullay!</h1>
+
+// index.svelte
+<script>
+	import Sullay from '../components/sullay.svelte'
+</script>
+<Sullay/>
+```
+### 原样显示
+在Svelte中，您可以使用特殊{@html ...}标签进行原样显示。
+```
+<style>
+.html h1{
+	color: chartreuse;
+}
+</style>
+
+<script>
+	let html="<h1>I am sullay!</h1>"
+</script>
+
+<div class="html">{@html html}</div>
+```
+测试发现上面代码中的color: chartreuse;并没有生效。
+原因是因为{@html ...}中的标签并没有添加对应此组件的class属性。
+修改一下上面的代码，如下：
+```
+<style>
+.html :global(h1){
+	color: chartreuse;
+}
+</style>
+
+<script>
+	let html="<h1>I am sullay!</h1>"
+</script>
+
+<div class="html">{@html html}</div>
+```
+阅读本文后相信你对svelte的使用已经有一个简单的认识，后续还会更多svelte教程的内容。部分内容来自于官方教程，有兴趣的可以结合起来一起看。
