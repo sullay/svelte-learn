@@ -1,21 +1,21 @@
 <script>
-	import Nav from '../components/Nav.svelte';
-
 	export let segment;
 </script>
 
 <style>
 	main {
 		position: relative;
-		max-width: 56em;
+		max-width: 960px;
 		background-color: white;
-		padding: 2em;
 		margin: 0 auto;
+		padding-top: 32px;
 		box-sizing: border-box;
 	}
+	/* main标签内的所有h1标签 */
+	main :global(h1){
+    color: red;
+	}
 </style>
-
-<Nav {segment}/>
 
 <main>
 	<slot></slot>
